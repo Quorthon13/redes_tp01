@@ -1,11 +1,15 @@
-package jokenpo;
+package jokenpo.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.google.gson.Gson;
+
+import jokenpo.game.Message;
 import jokenpo.util.ConstantsUtil;
 
 public class Host {
@@ -17,10 +21,15 @@ public class Host {
 	public Host() {
 	}
 
-	public Host(Socket socket, DataInputStream in, DataOutputStream out) {
-		this.socket = socket;
-		this.in = in;
-		this.out = out;
+	public Host(ServerSocket serverSocket) {
+		try {
+			socket = serverSocket.accept();
+			System.out.println("Nova conexão: " + socket);
+			in = new DataInputStream(this.socket.getInputStream());
+			out = new DataOutputStream(this.socket.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void start() {
@@ -33,10 +42,14 @@ public class Host {
 		}
 	}
 
+	public void close() {
+		closeStream();
+		closeSocket();
+	}
+
 	public void closeSocket() {
 		try {
-			System.out.println("Client " + socket + " sends exit...");
-			System.out.println("Connection closing...");
+			System.out.println("Closing client" + socket + "...");
 			socket.close();
 			System.out.println("Closed");
 		} catch (IOException e) {
@@ -53,7 +66,7 @@ public class Host {
 		}
 	}
 
-	public String read() {
+	private String read() {
 		String s = "";
 
 		try {
@@ -65,12 +78,23 @@ public class Host {
 		return s;
 	}
 
-	public void send(String content) {
+	private void send(String content) {
 		try {
 			out.writeUTF(content);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void sendMessage(Message message) {
+		Gson gson = new Gson();
+		String json = gson.toJson(message);
+		send(json);
+	}
+
+	public Message readMessage() {
+		Gson gson = new Gson();
+		return gson.fromJson(read(), Message.class);
 	}
 
 	public Socket getSocket() {

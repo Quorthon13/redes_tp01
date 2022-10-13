@@ -1,51 +1,42 @@
 package jokenpo.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
+import jokenpo.client.Host;
+import jokenpo.game.Match;
+import jokenpo.game.Message;
+import jokenpo.game.Message.MessageType;
+import jokenpo.game.Player;
 import jokenpo.util.ConstantsUtil;
 
 public class Server {
+	public Server() throws IOException, InterruptedException {
+		ServerSocket serverSocket = new ServerSocket(ConstantsUtil.PORT);
 
-	public Server() {
-		try {
-			ServerSocket serverSocket = new ServerSocket(ConstantsUtil.PORT);
-			List<Thread> threads = new ArrayList<Thread>();
-			while (true) {
-				Socket clientSocket = null;
+		Host host_1 = new Host(serverSocket);
+		sendNameRequest(host_1);
+		Host host_2 = new Host(serverSocket);
+		sendNameRequest(host_2);
 
-				try {
-					clientSocket = serverSocket.accept();
+		Player p_1 = new Player(host_1.readMessage().getContent(), host_1);
+		Player p_2 = new Player(host_2.readMessage().getContent(), host_2);
 
-					System.out.println("A new connection identified : " + clientSocket);
+		Match match = new Match(p_1, p_2);
+		match.play();
 
-					// obtaining input and out streams
-					DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-					DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-					Thread thread = new Thread(new ServerClientHandler(clientSocket, in, out));
-					threads.add(thread);
+		close(serverSocket, host_1, host_2);
+	}
 
-					System.out.println("Thread assigned");
-				} catch (Exception e) {
-					clientSocket.close();
-					serverSocket.close();
-					e.printStackTrace();
-					break;
-				}
+	private void sendNameRequest(Host host) {
+		Message message = new Message(MessageType.REQUEST_NAME, "Jogador, insira seu nome: ");
+		host.sendMessage(message);
+	}
 
-				if (threads.size() == 2) {
-					System.out.println("2 jogadores conectados, iniciando jogo...");
-					threads.stream().forEach(t -> t.start());
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void close(ServerSocket serverSocket, Host host_1, Host host_2) throws IOException {
+		host_1.close();
+		host_2.close();
+		serverSocket.close();
 	}
 
 }
