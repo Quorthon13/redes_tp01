@@ -30,36 +30,6 @@ public class Match {
 		sendMatchResults();
 	}
 
-	private void sendMatchResults() {
-		if (gameNumber < ConstantsUtil.MAX_GAMES) {
-			return;
-		}
-
-		if (p_1.getScore() == p_2.getScore()) {
-			sendPlayerDrawsMatch();
-		} else {
-			sendPlayerWinsMatch();
-		}
-	}
-
-	private void sendPlayerDrawsMatch() {
-		Message drawMessage = Message.createPlayerDrawsMatch(p_1, p_2);
-		p_1.getHost().sendMessage(drawMessage);
-		p_2.getHost().sendMessage(drawMessage);
-	}
-
-	private void sendPlayerWinsMatch() {
-		Message winnerMessage = Message.createPlayerWinsMatch(p_1, p_2);
-		Message loserMessage = Message.createPlayerWinsMatch(p_1, p_2);
-		if (p_1.getScore() > p_2.getScore()) {
-			p_1.getHost().sendMessage(winnerMessage);
-			p_2.getHost().sendMessage(loserMessage);
-		} else {
-			p_1.getHost().sendMessage(loserMessage);
-			p_2.getHost().sendMessage(winnerMessage);
-		}
-	}
-
 	private void playSingleGame() throws InterruptedException {
 		readMoves();
 		sendGameResults();
@@ -121,6 +91,36 @@ public class Match {
 
 	public void increasegameNumber() {
 		this.gameNumber++;
+	}
+
+	private void sendMatchResults() {
+		if (gameNumber < ConstantsUtil.MAX_GAMES) {
+			return;
+		}
+
+		if (p_1.getScore() == p_2.getScore()) {
+			sendPlayerDrawsMatch();
+		} else {
+			sendPlayerWinsMatch();
+		}
+	}
+
+	private void sendPlayerDrawsMatch() {
+		Message drawMessage = Message.createPlayerDrawsMatch(p_1, p_2);
+		p_1.getHost().sendMessage(drawMessage);
+		p_2.getHost().sendMessage(drawMessage);
+	}
+
+	private void sendPlayerWinsMatch() {
+		Message winnerMessage = Message.createPlayerWinsMatch(p_1, p_2);
+		Message loserMessage = Message.createPlayerWinsMatch(p_1, p_2);
+		if (p_1.getScore() > p_2.getScore()) {
+			p_1.getHost().sendMessage(winnerMessage);
+			p_2.getHost().sendMessage(loserMessage);
+		} else {
+			p_1.getHost().sendMessage(loserMessage);
+			p_2.getHost().sendMessage(winnerMessage);
+		}
 	}
 
 	public Player getP_1() {
