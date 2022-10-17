@@ -49,4 +49,24 @@ public class Game {
 			return Results.DRAW;
 		}
 	}
+
+	// [Rock] x [Scissors]
+	@Override
+	public String toString() {
+		return "[" + moveToString(move_1) + "] x [" + moveToString(move_2) + "]";
+	}
+
+	private String moveToString(Move move) {
+		switch (move) {
+		case ROCK:
+			return "Pedra";
+		case PAPER:
+			return "Papel";
+		case SCISSORS:
+			return "Tesoura";
+		}
+
+		return "";
+	}
+
 }

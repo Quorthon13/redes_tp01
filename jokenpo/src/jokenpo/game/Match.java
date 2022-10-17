@@ -70,13 +70,13 @@ public class Match {
 	}
 
 	private void sendMatchResults(Player winner, Player loser) {
-		winner.getHost().sendMessage(Message.createPlayerWinsGame());
-		loser.getHost().sendMessage(Message.createPlayerLosesGame());
+		winner.getHost().sendMessage(Message.createPlayerWinsGame(this));
+		loser.getHost().sendMessage(Message.createPlayerLosesGame(this));
 		winner.increaseScore();
 	}
 
 	private void sendDraw(Player p_1, Player p_2) {
-		Message drawMessage = Message.createDraw();
+		Message drawMessage = Message.createDraw(this);
 		p_1.getHost().sendMessage(drawMessage);
 		p_2.getHost().sendMessage(drawMessage);
 	}

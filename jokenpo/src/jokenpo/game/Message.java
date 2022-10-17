@@ -28,15 +28,18 @@ public class Message {
 	}
 
 	public static Message createPlayerDrawsMatch(Player p_1, Player p_2) {
-		return new Message(MessageType.PLAYER_WINS_MATCH, "Você empatou a partida.\n" + getFinalResult(p_1, p_2));
+		return new Message(MessageType.PLAYER_WINS_MATCH,
+		        "\n" + getDelimiter() + "Você empatou a partida.\n" + getFinalResult(p_1, p_2));
 	}
 
 	public static Message createPlayerWinsMatch(Player p_1, Player p_2) {
-		return new Message(MessageType.PLAYER_WINS_MATCH, "Você ganhou a partida!\n" + getFinalResult(p_1, p_2));
+		return new Message(MessageType.PLAYER_WINS_MATCH,
+		        "\n" + getDelimiter() + "Você ganhou a partida!\n" + getFinalResult(p_1, p_2));
 	}
 
 	public static Message createPlayerLosesMatch(Player p_1, Player p_2) {
-		return new Message(MessageType.PLAYER_WINS_MATCH, "Você perdeu a partida.\n" + getFinalResult(p_1, p_2));
+		return new Message(MessageType.PLAYER_WINS_MATCH,
+		        "\n" + getDelimiter() + "Você perdeu a partida.\n" + getFinalResult(p_1, p_2));
 	}
 
 	private static String getFinalResult(Player p_1, Player p_2) {
@@ -49,24 +52,32 @@ public class Message {
 	}
 
 	public static Message createRequestMove(int matchNumber, String name) {
-		return new Message(MessageType.REQUEST_MOVE, "Partida " + matchNumber + "\n" + name
+		return new Message(MessageType.REQUEST_MOVE, getDelimiter() + "Partida " + matchNumber + "\n" + name
 		        + ", digite \"pedra\", \"papel\" ou \"tesoura\", ou \"sair\" para sair: ");
 	}
 
 	public static Message createPlayerWithdraws(String name) {
-		return new Message(MessageType.PLAYER_WITHDRAWS, "Vitória! " + name + " abandonou o jogo.");
+		return new Message(MessageType.PLAYER_WITHDRAWS, "\n\nVitória! " + name + " abandonou o jogo.");
 	}
 
-	public static Message createPlayerWinsGame() {
-		return new Message(MessageType.PLAYER_WINS_GAME, "Você ganhou!");
+	public static Message createPlayerWinsGame(Match match) {
+		return new Message(MessageType.PLAYER_WINS_GAME, getGameOverview(match) + "\nVocê ganhou!");
 	}
 
-	public static Message createPlayerLosesGame() {
-		return new Message(MessageType.PLAYER_LOSES_GAME, "Você perdeu.");
+	public static Message createPlayerLosesGame(Match match) {
+		return new Message(MessageType.PLAYER_LOSES_GAME, getGameOverview(match) + "\nVocê perdeu.");
 	}
 
-	public static Message createDraw() {
-		return new Message(MessageType.PLAYER_DRAWS_GAME, "Empate.");
+	public static Message createDraw(Match match) {
+		return new Message(MessageType.PLAYER_DRAWS_GAME, getGameOverview(match) + "\nEmpate.");
+	}
+
+	private static String getGameOverview(Match match) {
+		return match.getP_1().getName() + " " + match.getCurrentGame().toString() + " " + match.getP_2().getName();
+	}
+
+	private static String getDelimiter() {
+		return "\n--------------------------------------------------------------------\n";
 	}
 
 	public MessageType getType() {
